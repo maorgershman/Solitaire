@@ -8,5 +8,5 @@ public class Start {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		new Main();
 	}
-	
+
 }
