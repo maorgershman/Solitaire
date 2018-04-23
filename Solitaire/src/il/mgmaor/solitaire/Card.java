@@ -119,4 +119,17 @@ public class Card {
 		this.pile = pile;
 	}
 
+	@Override
+	public String toString() {
+		String rank = String.valueOf(this.rank);
+		String suit = "C";
+		if (this.suit == Solitaire.SUITS[1]) {
+			suit = "D";
+		} else if (this.suit == Solitaire.SUITS[2]) {
+			suit = "H";
+		} else if (this.suit == Solitaire.SUITS[3]) {
+			suit = "S";
+		}
+		return String.format("%s:%s", rank, suit);
+	}
 }

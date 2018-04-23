@@ -55,8 +55,15 @@ public class Listener {
 		boolean inRegionY = y >= UPPER_HALF_PILES_Y && y <= UPPER_HALF_PILES_Y + CARD_HEIGHT;
 
 		if (inRegionX && inRegionY) {
-			clickedStock();
-			display.repaint();
+			if (this.solitaire.getStock().isEmpty()) {
+				// If the stock is empty, replace the stock with the waste.
+				clickedStockAndItIsEmpty();
+			} else {
+				// Otherwise, add the card from the stock to the waste.
+				clickedStockAndItIsNotEmpty();
+			}
+			
+			this.display.repaint();
 		}
 	}
 
@@ -87,7 +94,7 @@ public class Listener {
 			this.distanceX = 0;
 			this.distanceY = 0;
 			dragged.clear();
-			display.repaint();
+			this.display.repaint();
 		}
 	}
 
@@ -103,7 +110,7 @@ public class Listener {
 				card.setCurrentY(y += 10);
 			}
 
-			display.repaint();
+			this.display.repaint();
 		}
 	}
 
@@ -149,34 +156,25 @@ public class Listener {
 		}
 	}
 
-	private void clickedStock() {
-		Stack<Card> stock = this.solitaire.getStock();
-		Stack<Card> waste = this.solitaire.getWaste();
-
-		if (stock.isEmpty()) {
-			// If the stock is empty, replace the stock with the waste.
-			clickedStockAndItIsEmpty(waste, stock);
-		} else {
-			// Otherwise, add the card from the stock to the waste.
-			clickedStockAndItIsNotEmpty(waste, stock);
-		}
-	}
-
-	private void clickedStockAndItIsEmpty(Stack<Card> waste, Stack<Card> stock) {
-		for (int i = 0; i < waste.size(); i++) {
-			Card card = waste.pop();
-			stock.push(card);
+	private void clickedStockAndItIsEmpty() {
+		// TODO: Do not delete this variable!!!
+		// You got to save the size, it changes!!!
+		final int size = this.solitaire.getWaste().size();
+		
+		for (int i = 0; i < size; i++) {
+			Card card = this.solitaire.getWaste().pop();
+			this.solitaire.getStock().push(card);
 		}
 
-		Card top = stock.peek();
+		Card top = this.solitaire.getStock().peek();
 		top.setShown(true);
 		top.setHeading(true);
 	}
 
-	private void clickedStockAndItIsNotEmpty(Stack<Card> waste, Stack<Card> stock) {
-		Card topStock = stock.pop();
-		if (!waste.isEmpty()) {
-			Card topWaste = waste.peek();
+	private void clickedStockAndItIsNotEmpty() {
+		Card topStock = this.solitaire.getStock().pop();
+		if (!this.solitaire.getWaste().isEmpty()) {
+			Card topWaste = this.solitaire.getWaste().peek();
 			topWaste.setShown(false);
 			topWaste.setHeading(false);
 		}
@@ -185,7 +183,7 @@ public class Listener {
 		topStock.setPile(Pile.WASTE);
 		topStock.setLastX(WASTE_X);
 		topStock.setLastY(UPPER_HALF_PILES_Y);
-		waste.push(topStock);
+		this.solitaire.getWaste().push(topStock);
 	}
 
 	private void dropSuccessful(ArrayList<Card> dragged, Pile previousPile, int pileIndex) {
