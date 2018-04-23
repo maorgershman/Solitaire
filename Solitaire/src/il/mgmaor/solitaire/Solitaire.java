@@ -22,6 +22,13 @@ public class Solitaire {
 
 		return temp;
 	}
+	
+	public static boolean isMouseOn(Card card, int xMouse, int yMouse) {
+		boolean inRegionX = xMouse >= card.getCurrentX() && xMouse <= card.getCurrentX() + Display.CARD_WIDTH;
+		boolean inRegionY = yMouse >= card.getCurrentY() && yMouse <= card.getCurrentY() + Display.CARD_HEIGHT;
+		
+		return inRegionX && inRegionY;
+	}
 
 	// The piles.
 
@@ -167,6 +174,16 @@ public class Solitaire {
 
 	public ArrayList<Stack<Card>> getFoundation() {
 		return foundation;
+	}
+	
+	public Stack<Card> getFoundationPile(char suit) {
+		int suitIndex = -1;
+		for (int i = 0; i < 4; i++) {
+			if (suit == SUITS[i]) {
+				suitIndex = i;
+			}
+		}
+		return this.foundation.get(suitIndex);
 	}
 
 	public void setFoundation(ArrayList<Stack<Card>> foundation) {
