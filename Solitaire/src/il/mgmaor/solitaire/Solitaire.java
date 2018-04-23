@@ -141,4 +141,52 @@ public class Solitaire {
 		}
 	}
 
+	public Card[] getDeck() {
+		return deck;
+	}
+
+	public void setDeck(Card[] deck) {
+		this.deck = deck;
+	}
+
+	public Stack<Card> getStock() {
+		return stock;
+	}
+
+	public void setStock(Stack<Card> stock) {
+		this.stock = stock;
+	}
+
+	public Stack<Card> getWaste() {
+		return waste;
+	}
+
+	public void setWaste(Stack<Card> waste) {
+		this.waste = waste;
+	}
+
+	public ArrayList<Stack<Card>> getFoundation() {
+		return foundation;
+	}
+
+	public void setFoundation(ArrayList<Stack<Card>> foundation) {
+		this.foundation = foundation;
+	}
+
+	public ArrayList<Stack<Card>> getTableau() {
+		return tableau;
+	}
+
+	public void setTableau(ArrayList<Stack<Card>> tableau) {
+		this.tableau = tableau;
+	}
+
+	public ArrayList<Card> getDragged() {
+		return dragged;
+	}
+
+	public void setDragged(ArrayList<Card> dragged) {
+		this.dragged = dragged;
+	}
+
 }

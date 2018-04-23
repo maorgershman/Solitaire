@@ -15,7 +15,7 @@ public class Main {
 
 	private void initGraphics() {
 		JFrame frame = new JFrame("Solitaire");
-		display = new Display(this);
+		display = new Display();
 
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
