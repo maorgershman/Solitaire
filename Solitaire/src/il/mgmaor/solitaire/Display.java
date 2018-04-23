@@ -8,6 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Stack;
 
 import javax.swing.JPanel;
@@ -70,13 +73,47 @@ public class Display extends JPanel {
 
 	// Locals.
 
-	private Solitaire solitaire;
+	private Solitaire		solitaire;
+
+	private Listener		listener;
+
+	private MouseAdapter		mouseAdapter;
+
+	private MouseMotionAdapter	mouseMotionAdapter;
 
 	// Constructor.
 
 	public Display() {
 		this.solitaire = new Solitaire();
+		this.listener = new Listener(this.solitaire, this);
 
+		this.mouseAdapter = new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent event) {
+				listener.mousePressed(event);
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				listener.mouseClicked(event);
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent event) {
+				listener.mouseReleased(event);
+			}
+		};
+		
+		this.mouseMotionAdapter = new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent event) {
+				listener.mouseDragged(event);
+			}
+		};
+		
+		addMouseListener(mouseAdapter);
+		addMouseMotionListener(mouseMotionAdapter);
+		
 		setPreferredSize(new Dimension(800, 600));
 		setOpaque(true);
 	}
@@ -170,10 +207,10 @@ public class Display extends JPanel {
 
 	private void drawEmptyPile(Graphics g, int x, int y) {
 		g.setColor(Color.LIGHT_GRAY);
-		
+
 		g.drawLine(x, y, x + CARD_WIDTH, y + CARD_HEIGHT);
 		g.drawLine(x, y + CARD_HEIGHT, x + CARD_WIDTH, y);
-		
+
 		g.drawRoundRect(x - 1, y - 1, CARD_WIDTH + 1, CARD_HEIGHT + 1, 15, 15);
 	}
 
@@ -188,35 +225,35 @@ public class Display extends JPanel {
 	private void drawCardFront(Graphics g, Card card) {
 		int x = card.getCurrentX();
 		int y = card.getCurrentY();
-		
+
 		if (card.isShown()) {
 			// If the card is shown, draw its face.
 			g.setColor(Color.WHITE);
 			g.fillRoundRect(x, y, CARD_WIDTH, CARD_HEIGHT, 15, 15);
-			
+
 			g.setFont(new Font(Font.DIALOG, Font.BOLD, 50));
 			g.setColor(Color.BLACK);
 			String rank = String.valueOf(card.getRank());
-			
+
 			rank = card.getRank() == 'T' ? "10" : rank;
 			g.drawString(rank, x + 10, y + 125);
-			
+
 			boolean club = card.getSuit() == Solitaire.SUITS[0];
 			boolean spade = card.getSuit() == Solitaire.SUITS[3];
-			
+
 			g.setColor(club || spade ? Color.BLACK : Color.RED);
 			g.drawString(String.valueOf(card.getSuit()), x + 45, y + 50);
 		} else {
 			// If the card is hidden, draw its back.
 			drawCardBack(g, x, y);
 		}
-		
+
 		g.drawRoundRect(x - 1, y - 1, CARD_WIDTH + 1, CARD_HEIGHT + 1, 15, 15);
 	}
 
 	private void drawFoundationPileSuit(Graphics g, int index, int x) {
 		char suit = Solitaire.SUITS[index];
-		
+
 		g.setFont(new Font(Font.DIALOG, Font.BOLD, 72));
 		g.setColor(Color.GRAY);
 		g.drawString(String.valueOf(suit), x + 18, UPPER_HALF_PILES_Y + 95);
