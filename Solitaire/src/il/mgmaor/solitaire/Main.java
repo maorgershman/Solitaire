@@ -1,5 +1,8 @@
 package il.mgmaor.solitaire;
 
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class Main {
@@ -21,7 +24,8 @@ public class Main {
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		
-		// TODO: Add icon.
+		Image icon = new ImageIcon("./resources/icon.png").getImage();
+		frame.setIconImage(icon);
 	}
 	
 }
