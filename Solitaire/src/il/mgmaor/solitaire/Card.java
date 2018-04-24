@@ -32,6 +32,17 @@ public class Card {
 	public char getRank() {
 		return rank;
 	}
+	
+	public int getRankIndex() {
+		int index = -1;
+		for (int i = 0; i < 13; i++) {
+			if (rank == Solitaire.RANKS[i]) {
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
 
 	public void setRank(char rank) {
 		this.rank = rank;
@@ -39,6 +50,10 @@ public class Card {
 
 	public char getSuit() {
 		return suit;
+	}
+	
+	public boolean isBlack() {
+		return suit == Solitaire.SUITS[0] || suit == Solitaire.SUITS[3];
 	}
 
 	public void setSuit(char suit) {

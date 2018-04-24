@@ -2,6 +2,7 @@ package il.mgmaor.solitaire;
 
 import static il.mgmaor.solitaire.Display.*;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -78,13 +79,18 @@ public class Listener {
 			Pile previousPile = dragged.get(0).getPile();
 			int taPileIndex = dragged.get(0).getTableauPileIndex();
 
+			boolean droppedInFoundation = dragged.size() == 1 && y < UPPER_HALF_PILES_Y + CARD_HEIGHT;
+			
 			// More efficient to check here the y ->
-			if (dragged.size() == 1 && y < UPPER_HALF_PILES_Y + CARD_HEIGHT) {
+			if (droppedInFoundation) {
 				checkDropFoundation(dragged, x, y);
 			} else {
-				int pile = checkDropTableauBounds(dragged, x, y);
+				int pile = checkDropTableauBoundsPile(dragged, x, y);
 				if (pile != -1) {
-					// TODO: Check success for the tableau.
+					this.success = checkDropTableauSuccess(dragged, x, y, pile);
+					if (this.success) {
+						dropTableauSuccessful(dragged, pile);
+					}
 				}
 			}
 
@@ -239,7 +245,7 @@ public class Listener {
 	/**
 	 * @return The index of the clicked pile of the tableau if even, otherwise -1.
 	 */
-	private int checkDropTableauBounds(ArrayList<Card> dragged, int x, int y) {
+	private int checkDropTableauBoundsPile(ArrayList<Card> dragged, int x, int y) {
 		// Determine what pile by the x.
 		final int yPile = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
 		
@@ -263,11 +269,49 @@ public class Listener {
 				size = 1;
 			}
 			// Now check if the Y fits the pile.
-			if (y >= yPile && y <= yPile + (size - 1) * 10 + CARD_HEIGHT) {
+			int Y = yPile + (size - 1) * 10;
+			if (y >= Y && y <= Y + CARD_HEIGHT) {
 				inY = true;
 			}
 		}
 		return inY ? pileIndex : -1;
+	}
+	
+	private boolean checkDropTableauSuccess(ArrayList<Card> dragged, int x, int y, int pile) {
+		Card topDragged = dragged.get(0);
+		Card topPile = this.solitaire.getTableau().get(pile).peek();
+		int rankIndexDragged = topDragged.getRankIndex();
+		System.out.println("RANK INDEX DRAGGED: " + rankIndexDragged);
+		int rankIndexPile = topPile.getRankIndex();
+		System.out.println("RANK INDEX PILE: " + rankIndexPile);
+		boolean draggedBlack = topDragged.isBlack();
+		System.out.println("DRAGGED BLACK? " + draggedBlack);
+		boolean pileBlack = topPile.isBlack();
+		System.out.println("PILE BLACK? " + pileBlack);
+
+		boolean ranksFit = rankIndexDragged == rankIndexPile - 1;
+		boolean suitsFit = draggedBlack != pileBlack;
+		
+		System.out.println("RANKS FIT? " + ranksFit);
+		System.out.println("SUITS FIT? " + suitsFit);
+		System.out.println("-------");
+		return ranksFit && suitsFit;
+	}
+	
+	private void dropTableauSuccessful(ArrayList<Card> dragged, int pileIndex) {
+		Stack<Card> pile = this.solitaire.getTableau().get(pileIndex);
+		final int sizeDragged = dragged.size();
+		final int sizePile = this.solitaire.getTableau().get(pileIndex).size();
+		for (int i = 0; i < sizeDragged; i++) {
+			Point newLoc = tableauLocation(pileIndex, sizePile + sizeDragged - 1);
+			
+			Card toAdd = dragged.get(i);
+			toAdd.setLastX(newLoc.x);
+			toAdd.setLastY(newLoc.y);
+			toAdd.setPile(Pile.TABLEAU);
+			pile.push(toAdd);
+		}
+		
 	}
 
 	private boolean rankFitsFoundation(Card card, Stack<Card> pile, int xPile, int yPile) {
@@ -289,10 +333,11 @@ public class Listener {
 		}
 		return false;
 	}
-
-	// TODO
-	private boolean rankFitsTableau(ArrayList<Card> dragged, Stack<Card> pile, int xPile, int yPile) {
-		
-		return false;
-	}
+	
+	
+//	private void printTableau() {
+//		for (Stack<Card> pile : solitaire.getTableau()){
+//			System.out.println("Pile 0: " + );
+//		}
+//	}
 }
