@@ -82,7 +82,10 @@ public class Listener {
 			if (dragged.size() == 1 && y < UPPER_HALF_PILES_Y + CARD_HEIGHT) {
 				checkDropFoundation(dragged, x, y);
 			} else {
-				// TODO: Check drop in the tableau.
+				int pile = checkDropTableauBounds(dragged, x, y);
+				if (pile != -1) {
+					// TODO: Check success for the tableau.
+				}
 			}
 
 			if (this.success) {
@@ -233,9 +236,38 @@ public class Listener {
 		}
 	}
 
-	// TODO
-	private void checkDropTableau() {
-
+	/**
+	 * @return The index of the clicked pile of the tableau if even, otherwise -1.
+	 */
+	private int checkDropTableauBounds(ArrayList<Card> dragged, int x, int y) {
+		// Determine what pile by the x.
+		final int yPile = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
+		
+		int pileIndex = -1;
+		boolean inY = false;
+		int xPile = STOCK_X;
+		
+		for (int i = 0; i < 7; i++) {
+			if (x >= xPile && x <= xPile + CARD_WIDTH) {
+				pileIndex = i;
+				break;
+			}
+			xPile += CARD_WIDTH + SPACE;
+		}
+		// If it is -1, the player hasn't clicked any pile.
+		if (pileIndex != -1) {
+			Stack<Card> pile = this.solitaire.getTableau().get(pileIndex);
+			int size = pile.size();
+			// Empty/Size 1 are the same y value.
+			if (size == 0) {
+				size = 1;
+			}
+			// Now check if the Y fits the pile.
+			if (y >= yPile && y <= yPile + (size - 1) * 10 + CARD_HEIGHT) {
+				inY = true;
+			}
+		}
+		return inY ? pileIndex : -1;
 	}
 
 	private boolean rankFitsFoundation(Card card, Stack<Card> pile, int xPile, int yPile) {
@@ -259,8 +291,8 @@ public class Listener {
 	}
 
 	// TODO
-	private boolean rankFitsTableau() {
-
+	private boolean rankFitsTableau(ArrayList<Card> dragged, Stack<Card> pile, int xPile, int yPile) {
+		
 		return false;
 	}
 }

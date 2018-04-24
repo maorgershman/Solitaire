@@ -48,7 +48,7 @@ public class Solitaire {
 
 	public Solitaire() {
 		createPiles();
-		//shuffle();
+		shuffle();
 		fillPiles();
 	}
 
