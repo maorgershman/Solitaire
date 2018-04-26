@@ -14,13 +14,9 @@ public class Card {
 
 	private int	currentY;
 
-	private int	tableauPileIndex;
-
-	private int	tableauCardIndex;
+	private int	previousTableauPileIndex;
 
 	private boolean	shown;
-
-	private boolean	heading;
 
 	private Pile	pile;
 
@@ -94,20 +90,12 @@ public class Card {
 		this.currentY = currentY;
 	}
 
-	public int getTableauPileIndex() {
-		return tableauPileIndex;
+	public int getPreviousTableauPileIndex() {
+		return previousTableauPileIndex;
 	}
 
-	public void setTableauPileIndex(int tableauPileIndex) {
-		this.tableauPileIndex = tableauPileIndex;
-	}
-
-	public int getTableauCardIndex() {
-		return tableauCardIndex;
-	}
-
-	public void setTableauCardIndex(int tableauCardIndex) {
-		this.tableauCardIndex = tableauCardIndex;
+	public void setPreviousTableauPileIndex(int previousTableauPileIndex) {
+		this.previousTableauPileIndex = previousTableauPileIndex;
 	}
 
 	public boolean isShown() {
@@ -116,14 +104,6 @@ public class Card {
 
 	public void setShown(boolean shown) {
 		this.shown = shown;
-	}
-
-	public boolean isHeading() {
-		return heading;
-	}
-
-	public void setHeading(boolean heading) {
-		this.heading = heading;
 	}
 
 	public Pile getPile() {
@@ -146,5 +126,15 @@ public class Card {
 			suit = "S";
 		}
 		return String.format("%s:%s", rank, suit);
+	}
+	
+	public void fullDebug() {
+		System.out.println("---CARD INFO---");
+		System.out.println("Name " + toString());
+		System.out.println("Shown " + shown);
+		System.out.println("Pile " + pile);
+		System.out.println("Last X " + lastX);
+		System.out.println("Last Y " + lastY);
+		System.out.println("Previous Pile Index " + previousTableauPileIndex);
 	}
 }

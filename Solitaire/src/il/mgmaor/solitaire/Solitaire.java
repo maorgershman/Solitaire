@@ -48,7 +48,7 @@ public class Solitaire {
 
 	public Solitaire() {
 		createPiles();
-		shuffle();
+		//shuffle();
 		fillPiles();
 	}
 
@@ -122,8 +122,6 @@ public class Solitaire {
 			Card top = this.deck[startFrom + i];
 			// Set the card shown
 			top.setShown(true);
-			// Set the card heading
-			top.setHeading(true);
 
 			// Add the hidden cards and the shown card.
 			for (int j = 0; j < i + 1; j++) {
@@ -136,8 +134,7 @@ public class Solitaire {
 				card.setLastX(location.x);
 				card.setLastY(location.y);
 				card.setPile(Pile.TABLEAU);
-				card.setTableauPileIndex(i);
-				card.setTableauCardIndex(j);
+				card.setPreviousTableauPileIndex(i);
 
 				// Add the card to the pile.
 				pile.push(card);
@@ -192,6 +189,16 @@ public class Solitaire {
 
 	public ArrayList<Stack<Card>> getTableau() {
 		return tableau;
+	}
+	
+	public int getHiddenCards(int pileIndex) {
+		int count = 0;
+		for (Card card : this.tableau.get(pileIndex)) {
+			if (!card.isShown()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public void setTableau(ArrayList<Stack<Card>> tableau) {
