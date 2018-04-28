@@ -113,8 +113,9 @@ public class Listener {
 			}
 			if (pileIndex != -1) {
 				Card firstDragged = dragged.get(0);
+				int tableauY = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
+				int lastY    = tableauY + SPACE * (pile.size() - 1);
 				if (pile.isEmpty() && firstDragged.getRank() == 'K') {
-					int tableauY = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
 					if (y >= tableauY && y <= tableauY + CARD_HEIGHT) {
 						int size = dragged.size();
 						Stack<Card> previousPile;
@@ -129,18 +130,18 @@ public class Listener {
 							if (firstDragged.getPile() == Pile.TABLEAU && !previousPile.isEmpty()) {
 								previousPile.peek().setShown(true);
 							}
-							firstDragged.setPile(Pile.TABLEAU);
-							firstDragged.setLastX(pileX);
-							firstDragged.setLastY(tableauY);
-							firstDragged.setPreviousTableauPileIndex(pileIndex);
-							pile.push(dragged.remove(i));
+							Card current = dragged.get(i);
+							current.setPile(Pile.TABLEAU);
+							current.setLastX(pileX);
+							current.setLastY(lastY + SPACE);
+							current.setPreviousTableauPileIndex(pileIndex);
+							pile.push(current);
+							lastY += SPACE;
 						}
 						this.dropSuccessful = true;
 					}
 				} else if (!pile.isEmpty() && firstDragged.getRank() != 'K') {
 					Card firstPile = pile.peek();
-					int tableauY = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
-					int lastY    = tableauY + SPACE * (pile.size() - 1);
 					if (y >= lastY && y <= lastY + CARD_HEIGHT) {
 						int     firstDraggedRankIndex = firstDragged.getRankIndex();
 						int     firstPileRankIndex    = firstPile.getRankIndex();
