@@ -1,5 +1,6 @@
 package il.mgmaor.solitaire;
 
+import static il.mgmaor.solitaire.Display.*;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
@@ -55,34 +56,22 @@ public class Solitaire {
 	// Local methods.
 
 	private void createPiles() {
-		// Create the deck.
-		this.deck = deckOrganized();
-
-		// Create the foundation.
+		this.deck       = deckOrganized();
 		this.foundation = new ArrayList<>(4);
+		this.tableau    = new ArrayList<>(7);
+		this.stock      = new Stack<>();
+		this.waste      = new Stack<>();
+		this.dragged    = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			this.foundation.add(new Stack<>());
 		}
-
-		// Create the tableau.
-		this.tableau = new ArrayList<>(7);
 		for (int i = 0; i < 7; i++) {
 			this.tableau.add(new Stack<>());
 		}
-
-		// Create the stock.
-		this.stock = new Stack<>();
-
-		// Create the waste.
-		this.waste = new Stack<>();
-
-		// Create an empty dragged stack.
-		this.dragged = new ArrayList<>();
 	}
 
 	private void shuffle() {
 		Random rand = new Random();
-
 		for (int i = 0; i < this.deck.length; i++) {
 			int randomPosition = rand.nextInt(this.deck.length);
 			Card temp = this.deck[i];
@@ -91,56 +80,41 @@ public class Solitaire {
 		}
 	}
 
+	private int startFrom = 0;
+	
 	private void fillPiles() {
-		// The index from which we start taking cards from the deck.
-		int startFrom = 0;
-
-		// Fill the stock with 24 cards, but update them first.
+		fillStock();
+		fillTableau();
+	}
+	
+	private void fillStock() {
 		for (int i = 0; i < 24; i++) {
-			// Update the counter.
-			Card card = this.deck[startFrom++];
-
-			// Set the card location as the stock location.
+			Card card = this.deck[this.startFrom++];
 			card.setLastX(Display.STOCK_X);
 			card.setLastY(Display.UPPER_HALF_PILES_Y);
-
-			// Set the pile to Stock.
 			card.setPile(Pile.STOCK);
-
-			// Add the card to the stock.
 			this.stock.push(card);
 		}
-
-		// Fill all the piles of the tableau.
+	}
+	
+	private void fillTableau() {
+		int x = STOCK_X;
+		int y;
 		for (int i = 0; i < 7; i++) {
 			Stack<Card> pile = this.tableau.get(i);
-
-			// Update the counter.
-			startFrom += i;
-
-			// The top card that is yet to be added.
-			Card top = this.deck[startFrom + i];
-			// Set the card shown
-			top.setShown(true);
-
-			// Add the hidden cards and the shown card.
+			Card        top  = this.deck[(this.startFrom += i) + i];
+			y                = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
 			for (int j = 0; j < i + 1; j++) {
 				Card card = this.deck[startFrom + j];
-
-				// The location that we want to place the card at.
-				Point location = Display.tableauLocation(i, j);
-
-				// Update the card properties.
-				card.setLastX(location.x);
-				card.setLastY(location.y);
+				card.setLastX(x);
+				card.setLastY(y);
 				card.setPile(Pile.TABLEAU);
 				card.setPreviousTableauPileIndex(i);
-
-				// Add the card to the pile.
 				pile.push(card);
+				y += SPACE;
 			}
-
-			// Add the pile to the tableau.
+			x += CARD_WIDTH + SPACE;
+			top.setShown(true);
 			this.tableau.add(pile);
 		}
 	}

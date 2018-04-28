@@ -8,27 +8,17 @@ import java.util.Stack;
 
 public class Listener {
 
-	// Locals.
-
 	private Solitaire	solitaire;
-
 	private Display		display;
-
 	private int		distanceX;
-
 	private int		distanceY;
-	
 	private boolean         dropSuccessful;
-
-	// Constructor.
 
 	public Listener(Solitaire solitaire, Display display) {
 		this.solitaire      = solitaire;
 		this.display        = display;
 		this.dropSuccessful = false;
 	}
-
-	// Events.
 	
 	public void mouseClicked(MouseEvent event) {
 		int x             = event.getX();
@@ -67,6 +57,9 @@ public class Listener {
 		int             y              = event.getY();
 		int             pileX          = 0;
 		boolean         fitUpperPilesY = y >= UPPER_HALF_PILES_Y && y <= UPPER_HALF_PILES_Y + CARD_HEIGHT;
+		
+		// Drop at the foundation
+		
 		if (fitUpperPilesY && dragged.size() == 1) {
 			pileX            = STOCK_X + 3 * CARD_WIDTH + 3 * SPACE;
 			char pileSuit    = '\0';
@@ -104,7 +97,9 @@ public class Listener {
 					this.dropSuccessful = true;
 				}
 			}
-		} else if (dragged.size() != 0) {
+		// Drop at the tableau
+			
+		} else if (!fitUpperPilesY && dragged.size() != 0) {
 			pileX                 = STOCK_X;
 			Stack<Card> pile      = null;
 			int         pileIndex = -1;
@@ -116,11 +111,8 @@ public class Listener {
 				}
 				pileX += CARD_WIDTH + SPACE;
 			}
-			
 			if (pileIndex != -1) {
 				Card firstDragged = dragged.get(0);
-				// TODO:
-				// Check when more than one card is dropped.
 				if (pile.isEmpty() && firstDragged.getRank() == 'K') {
 					int tableauY = UPPER_HALF_PILES_Y + CARD_HEIGHT + SPACE;
 					if (y >= tableauY && y <= tableauY + CARD_HEIGHT) {
@@ -140,6 +132,7 @@ public class Listener {
 							firstDragged.setPile(Pile.TABLEAU);
 							firstDragged.setLastX(pileX);
 							firstDragged.setLastY(tableauY);
+							firstDragged.setPreviousTableauPileIndex(pileIndex);
 							pile.push(dragged.remove(i));
 						}
 						this.dropSuccessful = true;
@@ -157,8 +150,6 @@ public class Listener {
 						boolean suitFits              = firstDraggedBlack  != firstPileBlack;
 						if (rankFits && suitFits) {
 							int size = dragged.size();
-							System.out.println("size: " + size);
-							System.out.println("Dragged: " + dragged);
 							Stack<Card> previousPile;
 							if (firstDragged.getPile() == Pile.WASTE) {
 								previousPile = this.solitaire.getWaste();
@@ -171,12 +162,13 @@ public class Listener {
 								if (firstDragged.getPile() == Pile.TABLEAU && !previousPile.isEmpty()) {
 									previousPile.peek().setShown(true);
 								}
-								firstDragged.setPile(Pile.TABLEAU);
-								firstDragged.setLastX(pileX);
-								firstDragged.setLastY(lastY + SPACE);
-								System.out.println("I want to remove dragged[" + i + "]");
-								System.out.println("It should be " + dragged.get(i));
-								pile.push(dragged.remove(i));
+								Card current = dragged.get(i);
+								current.setPile(Pile.TABLEAU);
+								current.setLastX(pileX);
+								current.setLastY(lastY + SPACE);
+								current.setPreviousTableauPileIndex(pileIndex);
+								pile.push(current);
+								lastY += SPACE;
 							}
 							this.dropSuccessful = true;
 						}
@@ -262,7 +254,7 @@ public class Listener {
 		}
 		if (pileSuit != '\0') {
 			this.solitaire.getDragged().add(pile.peek());
-			this.distanceX = x - WASTE_X;
+			this.distanceX = x - pileX;
 			this.distanceY = y - UPPER_HALF_PILES_Y;
 		}
 	}
@@ -299,19 +291,37 @@ public class Listener {
 			} else {
 				int cardIndex = -1;
 				int cardY     = lastShownY;
-				for (int i = hidden; i < size - hidden + 2; i++) {
-					if (y >= cardY && y <= cardY + CARD_HEIGHT) {
+				for (int i = hidden; i < size; i++) {
+					if (y >= cardY && y <= cardY + SPACE) {
 						cardIndex = i;
-					}
-					if (cardIndex == -1) {
-						cardY += SPACE;
+						break;
 					} else {
-						this.solitaire.getDragged().add(pile.get(i));
-						this.distanceX = x - pileX;
-						this.distanceY = y - cardY;
+						cardY += SPACE;
 					}
 				}
+				System.out.println(cardIndex);
+				for (int i = cardIndex; i < size; i++) {
+					this.solitaire.getDragged().add(pile.get(i));
+					this.distanceX = x - pileX;
+					this.distanceY = y - cardY;
+				}
 			}
+		}
+	}
+	
+	private void debugTableau() {
+		System.out.println("--TABLEAU--");
+		for (int i = 0; i < 7; i++) {
+			Stack<Card> stack = this.solitaire.getTableau().get(i);
+			System.out.printf("Pile #%d: %s\n", i, stack.toString());
+		}
+	}
+	
+	private void debugFoundation() {
+		System.out.println("**FOUNDATION**");
+		for (int i = 0; i < 4; i++) {
+			Stack<Card> stack = this.solitaire.getFoundation().get(i);
+			System.out.printf("Pile #%d: %s\n", i, stack.toString());
 		}
 	}
 }
