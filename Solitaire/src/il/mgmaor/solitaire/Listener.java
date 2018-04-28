@@ -75,7 +75,7 @@ public class Listener {
 				pileX += CARD_WIDTH + SPACE;
 			}
 			if (pileSuit != '\0') {
-				Card card = dragged.remove(0);
+				Card card = dragged.get(0);
 				char rank = card.getRank();
 				if (rank == Solitaire.RANKS[pile.size()]) {
 					Stack<Card> previousPile = null;
@@ -117,28 +117,7 @@ public class Listener {
 				int lastY    = tableauY + SPACE * (pile.size() - 1);
 				if (pile.isEmpty() && firstDragged.getRank() == 'K') {
 					if (y >= tableauY && y <= tableauY + CARD_HEIGHT) {
-						int size = dragged.size();
-						Stack<Card> previousPile;
-						if (firstDragged.getPile() == Pile.WASTE) {
-							previousPile = this.solitaire.getWaste();
-						} else {
-							int previousIndex = firstDragged.getPreviousTableauPileIndex();
-							previousPile      = this.solitaire.getTableau().get(previousIndex);
-						}
-						for (int i = 0; i < size; i++) {
-							previousPile.pop();
-							if (firstDragged.getPile() == Pile.TABLEAU && !previousPile.isEmpty()) {
-								previousPile.peek().setShown(true);
-							}
-							Card current = dragged.get(i);
-							current.setPile(Pile.TABLEAU);
-							current.setLastX(pileX);
-							current.setLastY(lastY + SPACE);
-							current.setPreviousTableauPileIndex(pileIndex);
-							pile.push(current);
-							lastY += SPACE;
-						}
-						this.dropSuccessful = true;
+						dropInTableauSuccessful(dragged, pile, firstDragged, pileIndex, pileX, lastY);
 					}
 				} else if (!pile.isEmpty() && firstDragged.getRank() != 'K') {
 					Card firstPile = pile.peek();
@@ -150,28 +129,7 @@ public class Listener {
 						boolean rankFits              = firstPileRankIndex == firstDraggedRankIndex + 1;
 						boolean suitFits              = firstDraggedBlack  != firstPileBlack;
 						if (rankFits && suitFits) {
-							int size = dragged.size();
-							Stack<Card> previousPile;
-							if (firstDragged.getPile() == Pile.WASTE) {
-								previousPile = this.solitaire.getWaste();
-							} else {
-								int previousIndex = firstDragged.getPreviousTableauPileIndex();
-								previousPile      = this.solitaire.getTableau().get(previousIndex);
-							}
-							for (int i = 0; i < size; i++) {
-								previousPile.pop();
-								if (firstDragged.getPile() == Pile.TABLEAU && !previousPile.isEmpty()) {
-									previousPile.peek().setShown(true);
-								}
-								Card current = dragged.get(i);
-								current.setPile(Pile.TABLEAU);
-								current.setLastX(pileX);
-								current.setLastY(lastY + SPACE);
-								current.setPreviousTableauPileIndex(pileIndex);
-								pile.push(current);
-								lastY += SPACE;
-							}
-							this.dropSuccessful = true;
+							dropInTableauSuccessful(dragged, pile, firstDragged, pileIndex, pileX, lastY);
 						}
 					}
 				}
@@ -187,6 +145,8 @@ public class Listener {
 		this.dropSuccessful = false;
 		this.display.repaint();
 	}
+	
+	
 
 	public void mouseDragged(MouseEvent event) {
 		ArrayList<Card> dragged = this.solitaire.getDragged();
@@ -300,7 +260,6 @@ public class Listener {
 						cardY += SPACE;
 					}
 				}
-				System.out.println(cardIndex);
 				for (int i = cardIndex; i < size; i++) {
 					this.solitaire.getDragged().add(pile.get(i));
 					this.distanceX = x - pileX;
@@ -308,6 +267,31 @@ public class Listener {
 				}
 			}
 		}
+	}
+	
+	private void dropInTableauSuccessful(ArrayList<Card> dragged, Stack<Card> pile, Card firstDragged, int pileIndex, int pileX, int lastY) {
+		int size = dragged.size();
+		Stack<Card> previousPile;
+		if (firstDragged.getPile() == Pile.WASTE) {
+			previousPile = this.solitaire.getWaste();
+		} else {
+			int previousIndex = firstDragged.getPreviousTableauPileIndex();
+			previousPile      = this.solitaire.getTableau().get(previousIndex);
+		}
+		for (int i = 0; i < size; i++) {
+			previousPile.pop();
+			if (firstDragged.getPile() == Pile.TABLEAU && !previousPile.isEmpty()) {
+				previousPile.peek().setShown(true);
+			}
+			Card current = dragged.get(i);
+			current.setPile(Pile.TABLEAU);
+			current.setLastX(pileX);
+			current.setLastY(lastY + SPACE);
+			current.setPreviousTableauPileIndex(pileIndex);
+			pile.push(current);
+			lastY += SPACE;
+		}
+		this.dropSuccessful = true;
 	}
 	
 	private void debugTableau() {
