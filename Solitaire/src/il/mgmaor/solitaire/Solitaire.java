@@ -1,7 +1,6 @@
 package il.mgmaor.solitaire;
 
 import static il.mgmaor.solitaire.Display.*;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
@@ -10,9 +9,9 @@ public class Solitaire {
 
 	// Constants.
 
-	public static final char	RANKS[]	= { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K' };
+	public static final char RANKS[] = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K' };
 
-	public static final char	SUITS[]	= { '♣', '♦', '♥', '♠' };
+	public static final char SUITS[] = { '♣', '♦', '♥', '♠' };
 
 	public static final Card[] deckOrganized() {
 		Card[] temp = new Card[52];
@@ -186,5 +185,4 @@ public class Solitaire {
 	public void setDragged(ArrayList<Card> dragged) {
 		this.dragged = dragged;
 	}
-
 }

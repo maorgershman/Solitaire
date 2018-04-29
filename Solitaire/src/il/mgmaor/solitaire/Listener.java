@@ -8,11 +8,11 @@ import java.util.Stack;
 
 public class Listener {
 
-	private Solitaire	solitaire;
-	private Display		display;
-	private int		distanceX;
-	private int		distanceY;
-	private boolean         dropSuccessful;
+	private Solitaire solitaire;
+	private Display   display;
+	private int		  distanceX;
+	private int		  distanceY;
+	private boolean   dropSuccessful;
 
 	public Listener(Solitaire solitaire, Display display) {
 		this.solitaire      = solitaire;
@@ -274,9 +274,12 @@ public class Listener {
 		Stack<Card> previousPile;
 		if (firstDragged.getPile() == Pile.WASTE) {
 			previousPile = this.solitaire.getWaste();
-		} else {
+		} else if (firstDragged.getPile() == Pile.TABLEAU) {
 			int previousIndex = firstDragged.getPreviousTableauPileIndex();
 			previousPile      = this.solitaire.getTableau().get(previousIndex);
+		} else {
+			char suit = firstDragged.getSuit();
+			previousPile = this.solitaire.getFoundationPile(suit);
 		}
 		for (int i = 0; i < size; i++) {
 			previousPile.pop();
@@ -292,21 +295,5 @@ public class Listener {
 			lastY += SPACE;
 		}
 		this.dropSuccessful = true;
-	}
-	
-	private void debugTableau() {
-		System.out.println("--TABLEAU--");
-		for (int i = 0; i < 7; i++) {
-			Stack<Card> stack = this.solitaire.getTableau().get(i);
-			System.out.printf("Pile #%d: %s\n", i, stack.toString());
-		}
-	}
-	
-	private void debugFoundation() {
-		System.out.println("**FOUNDATION**");
-		for (int i = 0; i < 4; i++) {
-			Stack<Card> stack = this.solitaire.getFoundation().get(i);
-			System.out.printf("Pile #%d: %s\n", i, stack.toString());
-		}
 	}
 }

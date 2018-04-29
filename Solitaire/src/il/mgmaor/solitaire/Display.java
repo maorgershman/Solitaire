@@ -16,12 +16,12 @@ import javax.swing.JPanel;
 
 public class Display extends JPanel {
 	
-	private static final long	        serialVersionUID	= 1L;
-	public  static final int		CARD_WIDTH		= 100;
-	public  static final int		CARD_HEIGHT		= 140;
-	public  static final int		SPACE			= 10;
-	public  static final int		STOCK_X			= 10 + SPACE;
-	public  static final int		WASTE_X			= STOCK_X + CARD_WIDTH + SPACE;
+	private static final long	    serialVersionUID	= 1L;
+	public  static final int		CARD_WIDTH		    = 100;
+	public  static final int		CARD_HEIGHT		    = 140;
+	public  static final int		SPACE			    = 10;
+	public  static final int		STOCK_X			    = 10 + SPACE;
+	public  static final int		WASTE_X			    = STOCK_X + CARD_WIDTH + SPACE;
 	public  static final int		UPPER_HALF_PILES_Y	= 10 + SPACE;
 
 	private Solitaire		solitaire;

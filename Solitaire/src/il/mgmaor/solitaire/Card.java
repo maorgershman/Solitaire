@@ -6,15 +6,15 @@ public class Card {
 
 	private char	suit;
 
-	private int	lastX;
+	private int		lastX;
+	
+	private int		lastY;
 
-	private int	lastY;
+	private int		currentX;
 
-	private int	currentX;
+	private int		currentY;
 
-	private int	currentY;
-
-	private int	previousTableauPileIndex;
+	private int		previousTableauPileIndex;
 
 	private boolean	shown;
 
@@ -112,29 +112,5 @@ public class Card {
 
 	public void setPile(Pile pile) {
 		this.pile = pile;
-	}
-
-	@Override
-	public String toString() {
-		String rank = String.valueOf(this.rank);
-		String suit = "C";
-		if (this.suit == Solitaire.SUITS[1]) {
-			suit = "D";
-		} else if (this.suit == Solitaire.SUITS[2]) {
-			suit = "H";
-		} else if (this.suit == Solitaire.SUITS[3]) {
-			suit = "S";
-		}
-		return String.format("%s:%s", rank, suit);
-	}
-	
-	public void fullDebug() {
-		System.out.println("---CARD INFO---");
-		System.out.println("Name " + toString());
-		System.out.println("Shown " + shown);
-		System.out.println("Pile " + pile);
-		System.out.println("Last X " + lastX);
-		System.out.println("Last Y " + lastY);
-		System.out.println("Previous Pile Index " + previousTableauPileIndex);
 	}
 }
