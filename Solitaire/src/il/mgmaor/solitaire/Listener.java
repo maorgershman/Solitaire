@@ -36,18 +36,20 @@ public class Listener {
 	}
 
 	public void mousePressed(MouseEvent event) {
-		int     x              = event.getX();
-		int     y              = event.getY();
-		boolean fitUpperPilesY = y >= UPPER_HALF_PILES_Y && y <= UPPER_HALF_PILES_Y + CARD_HEIGHT;
-		if (fitUpperPilesY) {
-			boolean fitWasteX = x >= WASTE_X && x <= WASTE_X + CARD_WIDTH;
-			if (fitWasteX) {
-				pressedWaste(x, y);
+		if (!this.solitaire.gameEnd) {
+			int     x              = event.getX();
+			int     y              = event.getY();
+			boolean fitUpperPilesY = y >= UPPER_HALF_PILES_Y && y <= UPPER_HALF_PILES_Y + CARD_HEIGHT;
+			if (fitUpperPilesY) {
+				boolean fitWasteX = x >= WASTE_X && x <= WASTE_X + CARD_WIDTH;
+				if (fitWasteX) {
+					pressedWaste(x, y);
+				} else {
+					checkPressFoundation(x, y);
+				}
 			} else {
-				checkPressFoundation(x, y);
+				checkPressTableau(x, y);
 			}
-		} else {
-			checkPressTableau(x, y);
 		}
 	}
 
@@ -95,6 +97,15 @@ public class Listener {
 					card.setLastY(UPPER_HALF_PILES_Y);
 					pile.push(card);
 					this.dropSuccessful = true;
+					//
+					boolean end = true;
+					for (Stack<Card> fPile : this.solitaire.getFoundation()) {
+						if (fPile.size() < 13) {
+							end = false;
+							break;
+						}
+					}
+					this.solitaire.gameEnd = end;
 				}
 			}
 		// Drop at the tableau

@@ -10,6 +10,7 @@ import java.awt.RenderingHints.Key;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Rectangle2D;
 import java.util.Stack;
 
 import javax.swing.JPanel;
@@ -78,6 +79,7 @@ public class Display extends JPanel {
 		drawFoundation(g);
 		drawTableau(g);
 		drawDragged(g);
+		drawGameEnd(g);
 	}
 
 	private void drawStock(Graphics g) {
@@ -171,5 +173,21 @@ public class Display extends JPanel {
 		g.setFont(new Font(Font.DIALOG, Font.BOLD, 72));
 		g.setColor(Color.GRAY);
 		g.drawString(String.valueOf(suit), x + 18, UPPER_HALF_PILES_Y + 95);
+	}
+	
+	private void drawGameEnd(Graphics g) {
+		if (this.solitaire.gameEnd) {
+			Font font = new Font("Comic Sans MS", Font.BOLD, 48);
+			g.setFont(font);
+			
+			g.setColor(Color.GREEN);
+			
+			String text = "You win!";
+			Rectangle2D rect = g.getFontMetrics().getStringBounds(text, g);
+			int width = (int) rect.getWidth();
+			int height = (int) rect.getHeight();
+			
+			g.drawString(text, (this.getWidth() - width) / 2, (this.getHeight() - height) / 2);
+		}
 	}
 }

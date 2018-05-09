@@ -43,10 +43,13 @@ public class Solitaire {
 	private ArrayList<Stack<Card>>	tableau;
 
 	private ArrayList<Card>		dragged;
+	
+	public  boolean gameEnd;
 
 	// Constructor.
 
 	public Solitaire() {
+		this.gameEnd = false;
 		createPiles();
 		shuffle();
 		fillPiles();
